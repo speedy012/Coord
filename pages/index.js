@@ -1,65 +1,62 @@
+import React, { useState } from 'react';
+import { geocodeByAddress, getLatLng } from 'react-google-places-autocomplete';
+
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import Head from 'next/head'
+import Header from '../components/Header/header'
+import ParkingContainer from '../components/ParkingContainer/parkingContainer'
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
+export default function Index() {
+  const [value, setValue] = useState(null);
+  const [coord, setCoord] = useState({lat: null, lng: null})
+  const API_KEY = process.env.GOOGLE_MAP_KEY
+
+  const getCoord = () => {
+    if(value) {
+      let addy = value.label.replace(/,/g,"")
+      let lastIndex = addy.lastIndexOf(" ");
+      addy = addy.substring(0, lastIndex);
+
+      geocodeByAddress(addy)
+        .then(results => getLatLng(results[0]))
+        .then(({ lat, lng }) =>
+        setCoord({...coord, lat:parseFloat(lat.toFixed(6)), lng:parseFloat(lng.toFixed(6))})
+      )
+    }
+  }
+
+  const startOver = () => {
+    setValue(null);
+    setCoord({ lat: null, lng: null });
+  };
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+     <Header/>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+      { coord.lat === null ?
+      <>
+        <h4 className={styles.command}>Please Enter Address</h4>
+        <div className={styles.search}>
+          <GooglePlacesAutocomplete
+            apiKey={API_KEY}
+            selectProps={{
+              value,
+              onChange: setValue,
+            }}
+          />
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          {value ? getCoord() : ""}
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+        </>
+      :
+      <ParkingContainer coord={coord} startOver={startOver} />
+      }
+    </>
   )
 }
+
+
+
+

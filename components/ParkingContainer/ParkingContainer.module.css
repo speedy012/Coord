@@ -1,0 +1,21 @@
+.ParkingContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.title {
+ text-align: center;
+  margin: auto;
+  width: 50%;
+}
+
+
+.subtitle {
+  color:red
+}
+
+.link {
+   text-align: center;
+   padding-bottom:24px
+}
