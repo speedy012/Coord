@@ -10,7 +10,7 @@ import styles from '../styles/Home.module.css'
 export default function Index() {
   const [value, setValue] = useState(null);
   const [coord, setCoord] = useState({lat: null, lng: null})
-  const API_KEY = process.env.GOOGLE_MAP_KEY
+
 
   const getCoord = () => {
     if(value) {
@@ -40,7 +40,7 @@ export default function Index() {
         <h4 className={styles.command}>Please Enter Address</h4>
         <div className={styles.search}>
           <GooglePlacesAutocomplete
-            apiKey={API_KEY}
+            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY}
             selectProps={{
               value,
               onChange: setValue,
@@ -56,6 +56,8 @@ export default function Index() {
     </>
   )
 }
+
+
 
 
 
